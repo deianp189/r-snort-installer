@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+  remove|purge)
+    echo "[R-SNORT] Eliminando restos del paquete..."
+    rm -rf /opt/r-snort 2>/dev/null || true
+    rm -f /etc/systemd/system/snort.service 2>/dev/null || true
+    systemctl daemon-reexec 2>/dev/null || true
+    systemctl daemon-reload 2>/dev/null || true
+    echo "[R-SNORT] Limpieza completada."
+    ;;
+  *)
+    echo "[R-SNORT] postrm ejecutado con modo '$1' (sin limpiar)."
+    ;;
+esac

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+echo "[R-SNORT] Iniciando instalación automática..."
+
+if [ ! -d /opt/r-snort ]; then
+  echo "[R-SNORT] ERROR: /opt/r-snort no existe. La instalación falló o el paquete está corrupto."
+  exit 1
+fi
+
+cd /opt/r-snort
+chmod +x *.sh bin/*.sh
+
+./r-snort_installer.sh
+
+echo "[R-SNORT] Instalación completada."
