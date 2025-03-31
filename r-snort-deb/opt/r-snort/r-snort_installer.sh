@@ -35,6 +35,9 @@ log "Instalador R-SNORT iniciado"
 interface_selection
 export IFACE
 
+# Configuración automática de la interfaz de sniffeo
+source ./bin/interface_setup.sh
+
 # Crear estructura de directorios
 mkdir -p "$INSTALL_DIR"/{bin,etc/snort,lib,include,share,logs,rules}
 

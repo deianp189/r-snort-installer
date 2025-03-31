@@ -5,17 +5,11 @@ check_root() {
 }
 
 interface_selection() {
-  log "Detectando la primera interfaz Ethernet activa con IP..."
-
-  # Detectar interfaces Ethernet activas con IP
-  mapfile -t interfaces < <(
-    ip -o -4 addr show up | awk '$2 ~ /^e/ {print $2}' | uniq
-  )
-
-  if (( ${#interfaces[@]} == 0 )); then
-    error "No se encontró ninguna interfaz Ethernet activa con IP. Verifica la conexión de red."
+  if [[ -f /etc/rsnort_iface ]]; then
+    IFACE=$(cat /etc/rsnort_iface)
+    log "Interfaz cargada desde configuración previa: $IFACE"
+  else
+    error "No se encontró el archivo /etc/rsnort_iface con la interfaz seleccionada."
   fi
-
-  IFACE="${interfaces[0]}"
-  log "Interfaz detectada automáticamente: $IFACE"
 }
+
