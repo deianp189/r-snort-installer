@@ -17,7 +17,6 @@ alert tcp $HOME_NET any -> $EXTERNAL_NET any (
 #Detección de Número de Seguridad Social (NUSS) de España (formato: 12 dígitos, sin espacios)
 alert tcp $HOME_NET any -> $EXTERNAL_NET any (
     msg:"Sensitive Data - NUSS España detectado";
-    flow:established,to_server;
-    pcre:"/\\b\\d{12}\\b/";
+    pcre:"/\d{12}/";
     classtype:policy-violation; sid:1000003; rev:1;
 )
