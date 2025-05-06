@@ -1,16 +1,20 @@
 #!/bin/bash
 set -e
 
-echo "[R-SNORT] Iniciando instalación automática..."
+echo "[R-SNORT] postinst ejecutado..."
 
 if [ ! -d /opt/r-snort ]; then
-  echo "[R-SNORT] ERROR: /opt/r-snort no existe. La instalación falló o el paquete está corrupto."
+  echo "[R-SNORT] ERROR: /opt/r-snort no existe. Instalación corrupta."
   exit 1
 fi
 
-cd /opt/r-snort
-chmod +x *.sh bin/*.sh
+chmod +x /opt/r-snort/*.sh /opt/r-snort/bin/*.sh
 
-./r-snort_installer.sh
+if [ ! -f /etc/rsnort_iface ]; then
+  echo "[R-SNORT] Instalación inicial aún no realizada."
+  echo "[R-SNORT] Ejecuta manualmente: sudo /opt/r-snort/r-snort_installer.sh"
+else
+  echo "[R-SNORT] Interfaz detectada. No se requiere reinstalación automática."
+fi
 
-echo "[R-SNORT] Instalación completada."
+echo "[R-SNORT] postinst completado correctamente."
