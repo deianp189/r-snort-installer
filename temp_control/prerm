@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "[R-SNORT] Deteniendo servicio Snort antes de eliminar el paquete..."
+systemctl stop snort.service 2>/dev/null || true
+systemctl disable snort.service 2>/dev/null || true
+echo "[R-SNORT] Snort detenido correctamente (si estaba en ejecución)."
