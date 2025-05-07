@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 echo "[R-SNORT] postinst ejecutado..."
@@ -10,11 +11,6 @@ fi
 
 chmod +x /opt/r-snort/*.sh /opt/r-snort/bin/*.sh
 
-if [ ! -f /etc/rsnort_iface ]; then
-  echo "[R-SNORT] Instalación inicial aún no realizada."
-  echo "[R-SNORT] Ejecuta manualmente: sudo /opt/r-snort/r-snort_installer.sh"
-else
-  echo "[R-SNORT] Interfaz detectada. No se requiere reinstalación automática."
-fi
+echo "[R-SNORT] Saltando ejecución automática: el instalador externo se encarga."
 
 echo "[R-SNORT] postinst completado correctamente."

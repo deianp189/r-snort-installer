@@ -1,0 +1,20 @@
+#!//bash
+set -e
+
+echo "[R-SNORT] postinst ejecutado..."
+
+if [ ! -d /opt/r-snort ]; then
+  echo "[R-SNORT] ERROR: /opt/r-snort no existe. Instalación corrupta."
+  exit 1
+fi
+
+chmod +x /opt/r-snort/*.sh /opt/r-snort/bin/*.sh
+
+if [ ! -f /etc/rsnort_iface ]; then
+  echo "[R-SNORT] Instalación inicial aún no realizada. Ejecutando instalador..."
+  /opt/r-snort/r-snort_installer.sh
+else
+  echo "[R-SNORT] Interfaz detectada. No se requiere reinstalación automática."
+fi
+
+echo "[R-SNORT] postinst completado correctamente."

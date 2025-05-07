@@ -5,23 +5,24 @@
 set -euo pipefail
 trap 'echo -e "\n\033[0;31m[✗] Fallo en línea $LINENO del script principal\033[0m"' ERR
 
-CONFIG_DIR="$(pwd)/configuracion"
-SOFTWARE_DIR="$(pwd)/software"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$SCRIPT_DIR/configuracion"
+SOFTWARE_DIR="$SCRIPT_DIR/software"
 INSTALL_DIR="/usr/local/snort"
 LOG_FILE="/var/log/snort_install.log"
 
-# Redirigir salida a log inmediatamente
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Importar funciones
-source ./bin/core.sh
-source ./bin/checks.sh
-source ./bin/swap.sh
-source ./bin/dependencies.sh
-source ./bin/build_from_source.sh
-source ./bin/install_snort.sh
-source ./bin/configure_snort.sh
-source ./bin/stats.sh
+# Importar funciones desde rutas absolutas
+source "$SCRIPT_DIR/bin/core.sh"
+source "$SCRIPT_DIR/bin/checks.sh"
+source "$SCRIPT_DIR/bin/swap.sh"
+source "$SCRIPT_DIR/bin/dependencies.sh"
+source "$SCRIPT_DIR/bin/cleanup_old_daq.sh"
+source "$SCRIPT_DIR/bin/build_from_source.sh"
+source "$SCRIPT_DIR/bin/install_snort.sh"
+source "$SCRIPT_DIR/bin/configure_snort.sh"
+source "$SCRIPT_DIR/bin/stats.sh"
 
 # Verificación mínima
 type snort_config >/dev/null || { echo "La función snort_config no está disponible"; exit 1; }
@@ -36,7 +37,7 @@ interface_selection
 export IFACE
 
 # Configuración automática de la interfaz de sniffeo
-source ./bin/interface_setup.sh
+source "$SCRIPT_DIR/bin/interface_setup.sh"
 
 # Crear estructura de directorios
 mkdir -p "$INSTALL_DIR"/{bin,etc/snort,lib,include,share,logs,rules}

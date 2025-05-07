@@ -1,9 +1,9 @@
 Package: r-snort
-Version: 1.0
+Version: 1.1
 Section: net
 Priority: optional
 Architecture: all
-Depends: bash, build-essential, libpcap-dev
+Depends: bash, build-essential, libpcap-dev, autoconf, automake, libtool, cmake, check
 Maintainer: Deian Orlando Petrovics T. <deian.petrovics@gmail.com>
 Description: Instalador automático de R-Snort para sistemas ARM
  Automatiza la compilación, instalación y configuración de R-Snort con reglas locales y servicio systemd.
