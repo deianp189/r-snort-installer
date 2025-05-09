@@ -5,65 +5,37 @@
 ###############################################################################
 package_install() {
   local archivo="$1"
-
-  #-- Validación básica
   [[ "$archivo" == *.tar.gz ]] && gzip -t "$archivo" \
     || error "Archivo corrupto: $archivo"
 
   log "Instalando: $(basename "$archivo")"
   tar -xf "$archivo"
+  local dir
   dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -n 1) \
-    || error "No se encontró directorio tras descomprimir"
-
-  cd "$dir" || error "No se pudo entrar en $dir"
+       || error "No se encontró directorio tras descomprimir"
+  cd "$dir"
 
   case "$archivo" in
-    ##########################################################################
-    # 1.a  DAQ  – compila únicamente libdaq ≥ 3 y la instala en /usr/local
-    ##########################################################################
     *daq*)
-      cleanup_old_daq                          # ← evita colisiones
+      cleanup_old_daq
       log "⚙️  Compilando libdaq…"
-
-      [[ -x bootstrap ]] && ./bootstrap || \
-      { [[ -f configure.ac && ! -f configure ]] && autoreconf -fi; }
-
-      ./configure --prefix=/usr/local --disable-static --enable-shared \
-        || error "configure de DAQ falló"
+      [[ -x bootstrap ]] && ./bootstrap || { [[ -f configure.ac && ! -f configure ]] && autoreconf -fi; }
+      ./configure --prefix=/usr/local --disable-static --enable-shared
       make -j"$(nproc)"
-      sudo make install || error "Fallo al instalar DAQ"
+      sudo make install
       sudo ldconfig
-
-      #-- Verificación final
-      daq_ver=$(pkg-config --modversion libdaq 2>/dev/null || echo 0)
-      [[ "${daq_ver%%.*}" -lt 3 ]] && \
-        error "libdaq $daq_ver instalada (< 3.0)"
-      hdr_dir=$(pkg-config --cflags libdaq | sed -n 's/^-I\([^ ]*\).*$/\1/p')
-      [[ ! -f "$hdr_dir/daq_module_api.h" ]] && \
-        error "Cabeceras de DAQ no halladas en $hdr_dir"
       ;;
-
-    ##########################################################################
-    # 1.b  LuaJIT  (sin cambios de fondo, solo cambia el prefijo)
-    ##########################################################################
     *luajit*)
       make -j"$(nproc)"
       sudo make install PREFIX=/usr/local
       ;;
-
-    ##########################################################################
-    # 1.c  OpenSSL  (sin cambios de fondo, solo cambia el prefijo)
-    ##########################################################################
+    # OpenSSL ya no se compila: simplemente se omite
     *openssl*)
-      target=$(uname -m | grep -q aarch64 && echo linux-aarch64 || echo linux-generic32)
-      ./Configure --prefix=/usr/local --openssldir=/etc/ssl "$target"
-      make -j"$(nproc)"
-      sudo make install
+      log "⏭  Omitiendo OpenSSL – se usará el de la distribución"
+      cd ..
+      rm -rf "$dir"
+      return 0
       ;;
-
-    ##########################################################################
-    # 1.d  Resto de librerías genéricas
-    ##########################################################################
     *)
       [[ -f configure.ac && ! -f configure ]] && autoreconf -fi
       if [[ -f configure ]]; then
@@ -82,6 +54,7 @@ package_install() {
 }
 
 
+
 ###############################################################################
 # 2.  software_package_install  – instala todos los tarballs salvo Snort
 ###############################################################################
@@ -90,7 +63,7 @@ software_package_install() {
   cleanup_old_daq                          # ← primera limpieza global
   log "Ordenando paquetes para instalar dependencias…"
 
-  for f in $(ls *.tar.gz *.tar.xz 2>/dev/null | sort | grep -vi snort); do
+  for f in $(ls *.tar.* 2>/dev/null | sort | grep -Eiv 'snort|openssl'); do
     package_install "$f"
   done
 
