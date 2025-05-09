@@ -15,9 +15,10 @@ sudo apt update
 echo "📦 [R-SNORT] Instalando dependencias base..."
 sudo apt install --no-install-recommends -y \
   bash build-essential autoconf automake libtool cmake pkg-config \
+  flex bison libfl-dev libpcre3-dev \
   libpcap-dev liblzma-dev xz-utils check \
   clamav clamav-daemon \
-  libssl-dev            # ← 💡 la biblioteca de OpenSSL del sistema
+  libssl-dev
 
 echo "✅ Dependencias de sistema instaladas."
 
