@@ -317,14 +317,11 @@ suppress =
 }
 --]]
 
---[[
 event_filter =
 {
-    -- reduce the number of events logged for some rules
-    { gid = 1, sid = 1, type = 'limit', track = 'by_src', count = 2, seconds = 10 },
-    { gid = 1, sid = 2, type = 'both',  track = 'by_dst', count = 5, seconds = 60 },
+    -- Limita todas las alertas por IP origen: máximo 10 por minuto
+    { gid = 1, sid = 0, type = 'limit', track = 'by_src', count = 10, seconds = 60 },
 }
---]]
 
 --[[
 rate_filter =
